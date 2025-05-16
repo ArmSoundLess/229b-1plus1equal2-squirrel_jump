@@ -6,11 +6,13 @@ public class PlayerMovement : MonoBehaviour
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
     public float maxJumpForce = 20f;
-    public float wallBounceForce = 10f;
+    public float wallBounceForce = 7f;
     private bool isGrounded = false;
     private bool isChargingJump = false;
     private bool hasJumped = false;
     private float chargeDirection = 0f;
+    
+    
     
     private Rigidbody2D rb2d;
     
@@ -41,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
             jumpForce = Mathf.Min(jumpForce, maxJumpForce);
             rb2d.velocity = new Vector2(chargeDirection * moveSpeed, jumpForce);
         }
+        
     }
 
     void OnCollisionEnter2D(Collision2D collion2d)
@@ -53,11 +56,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (collion2d.gameObject.CompareTag("Wall") && hasJumped)
         {
-            float bounceDirection = -Mathf.Sign(rb2d.velocity.x);
-            
-            Debug.Log("ชนกำแพงนะจ๊ะ: " + collion2d.gameObject.name);
-            rb2d.velocity = new Vector2(bounceDirection * wallBounceForce, jumpForce);
-            
+            Vector2 bounceDirection = collion2d.contacts[0].normal + Vector2.up;
+            rb2d.velocity = bounceDirection.normalized * wallBounceForce;
         }
     }
 
